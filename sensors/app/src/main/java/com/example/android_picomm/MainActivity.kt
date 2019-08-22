@@ -2,13 +2,14 @@ package com.example.android_picomm
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import android.text.InputType
 import android.text.method.DigitsKeyListener
+import android.util.Log
+import com.personal_project.android_picomm.SensorController
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +22,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var mPortEditText: EditText
     lateinit var mSensorRecyclerView: RecyclerView
 
+    private lateinit var mSensorController: SensorController
+    private val TAG = "MAIN_ACTIVITY"
+
     enum class UI(val UIName: String){
         MAIN("main"),
     }
@@ -30,6 +34,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mSensorController = SensorController.instance(this)
+        mSensorController.startAllSensors()
+        Log.d(TAG, "sensor registered")
     }
 
     fun setupUI(uiName: String){
