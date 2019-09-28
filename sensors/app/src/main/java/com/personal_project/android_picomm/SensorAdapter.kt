@@ -4,9 +4,14 @@ import android.app.Activity
 
 open class SensorAdapter {
     protected val mActivity: Activity
+
     constructor(activity : Activity){
         mActivity = activity
     }
-    open fun start(){}
-    open fun pause(){}
+
+    open fun startAll(){}
+    open fun start(sensor: String){}
+    open fun pauseAll(){}
+    open fun pause(sensor: String){}
+    open fun getAdapterName(): String = ""
 }

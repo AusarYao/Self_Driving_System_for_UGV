@@ -12,27 +12,42 @@ class CommonSensorAdapter : SensorAdapter {
     private val TAG = "CommonSensorAdapter"
     private val mSensorReadInterval = 10000
     private val mSensorManager: SensorManager
-    private val mSensorsMap = HashMap<String, SensorListener>()
+    private val mSensorListenerMap = HashMap<String, SensorListener>()
 
-    constructor(activity: Activity): super(activity){
-            mSensorManager = mActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            listOf(mSensorManager.getSensorList(Sensor.TYPE_ALL)).forEach {
-                it.forEach {
-                    val sensorType = mSensorManager.getDefaultSensor(it.type)
-                    mSensorsMap.put(sensorType.name, SensorListener(sensorType))
-                }
+    constructor(activity: Activity) : super(activity) {
+        mSensorManager = mActivity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        listOf(mSensorManager.getSensorList(Sensor.TYPE_ALL)).forEach {
+            it.forEach {
+                val sensorType = mSensorManager.getDefaultSensor(it.type)
+                DataManager.addSensor(sensorType.name, TAG)
+                mSensorListenerMap.put(sensorType.name, SensorListener(sensorType))
             }
-    }
-    override fun start() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
     }
 
-    override fun pause() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getAdapterName(): String = TAG
+
+    override fun startAll() {
+        mSensorListenerMap.forEach { (key, listener) ->
+            if (DataManager.getSensorActive(key))
+                listener.onStart()
+        }
+    }
+
+    override fun start(sensor: String) {
+        mSensorListenerMap[sensor]!!.onStart()
+    }
+
+    override fun pauseAll() {
+        mSensorListenerMap.values.forEach { it.onPause() }
+    }
+
+    override fun pause(sensor: String) {
+        mSensorListenerMap[sensor]!!.onPause()
     }
 
     inner class SensorListener : SensorEventListener {
-        val mmSensor: Sensor
+        private val mmSensor: Sensor
 
         constructor(sensor: Sensor) {
             mmSensor = sensor
@@ -47,7 +62,7 @@ class CommonSensorAdapter : SensorAdapter {
             Log.d(TAG, tmp)
         }
 
-        fun onResume() {
+        fun onStart() {
             mSensorManager.registerListener(this, mmSensor, mSensorReadInterval)
         }
 

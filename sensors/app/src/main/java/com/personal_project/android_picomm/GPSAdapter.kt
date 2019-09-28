@@ -5,11 +5,11 @@ import android.app.Activity
 class GPSAdapter : SensorAdapter{
     constructor(activity: Activity): super(activity){
     }
-    override fun start() {
+    override fun startAll() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun pause() {
+    override fun pauseAll() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

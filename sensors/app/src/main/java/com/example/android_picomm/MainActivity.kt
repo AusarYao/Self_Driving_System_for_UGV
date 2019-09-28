@@ -1,31 +1,31 @@
 package com.example.android_picomm
 
-//import com.personal_project.android_picomm.SensorController
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.personal_project.android_picomm.DataCenter
+import com.personal_project.android_picomm.ConnectionStatusListener
+import com.personal_project.android_picomm.DataManager
+import com.personal_project.android_picomm.SensorController
 
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MAIN_ACTIVITY"
     private lateinit var mViewController: ViewController
-
-    enum class UI(val UIName: String){
-        MAIN("main"),
-    }
+    private lateinit var mSensorController: SensorController
 
     data class SendAddress(var IP: String, var port: Int)
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        mViewController = ViewController(this)
-        mViewController.setupUI(ViewController.MAIN_ACTIVITY)
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportActionBar!!.hide()
+
+        Log.d(TAG, "Main activity creating")
+        mSensorController = SensorController(this)
+        mViewController = ViewController(this, mSensorController.getListener())
+        mViewController.setupUI(UI.MAIN)
+        Log.d(TAG, "Main activity created")
     }
 }

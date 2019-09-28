@@ -1,34 +1,70 @@
 package com.personal_project.android_picomm
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.util.Log
-import java.util.*
+import kotlin.collections.HashMap
 
-class SensorController : BroadcastReceiver {
+class SensorController {
     private val TAG = "SENSOR_CONTROLLER"
     private val mActivity: Activity
-    private val mSensorListers = LinkedList<SensorAdapter>()
+    private val mSensorAdapterMap = HashMap<String, SensorAdapter>()
+    private val mSensorControllerListener = SensorControllerListenerImpl()
 
     constructor(activity: Activity) {
         mActivity = activity
-        mSensorListers.add(CameraAdapter(activity))
-        mSensorListers.add(CommonSensorAdapter(activity))
-        mSensorListers.add(GPSAdapter(activity))
+//        mSensorListers.add(CameraAdapter(mActivity))
+        val tmp = CommonSensorAdapter(mActivity)
+        mSensorAdapterMap.put(tmp.getAdapterName(), tmp)
+//        mSensorListers.add(GPSAdapter(mActivity))
+
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val action = intent!!.action
-        when (action) {
-            DataCenter.CONNECTION_BEGIN -> {
-                mSensorListers.forEach { it.start() }
+    fun startAll(){
+        mSensorAdapterMap.values.forEach { it.startAll() }
+//        Log.d(TAG, "connection start")
+    }
+
+    fun pauseAll(){
+        mSensorAdapterMap.values.forEach { it.pauseAll() }
+//        Log.d(TAG, "connection end")
+    }
+
+    fun getListener(): SensorControllerListener{
+        return mSensorControllerListener
+    }
+
+    inner class SensorControllerListenerImpl: SensorControllerListener{
+        override fun updateConnectionStatus(status: ConnectionStatus) {
+            when(status){
+                ConnectionStatus.CONNECTION_BEGIN -> {
+                    DataManager.setConnectionStatus(ConnectionStatus.CONNECTION_BEGIN)
+                    startAll()
+//                    Log.d(TAG, "connection start")
+                }
+                ConnectionStatus.CONNECTION_END -> {
+                    DataManager.setConnectionStatus(ConnectionStatus.CONNECTION_END)
+                    pauseAll()
+//                    Log.d(TAG, "connection end")
+                }
             }
-            DataCenter.CONNECTION_END -> {
-                mSensorListers.forEach { it.pause() }
+        }
+
+        override fun updateSensorActivity(sensor: String, status: Boolean) {
+            DataManager.setSensorActive(sensor, status)
+            if(DataManager.getConnectionStatus()) {
+                if(status)
+                    mSensorAdapterMap[DataManager.getAdapterName(sensor)]!!.start(sensor)
+                else
+                    mSensorAdapterMap[DataManager.getAdapterName(sensor)]!!.pause(sensor)
             }
-            else -> Log.e(TAG, "Error sensor start/end action")
         }
     }
+}
+
+interface ConnectionStatusListener {
+    fun updateConnectionStatus(status: ConnectionStatus)
+}
+
+interface SensorControllerListener: ConnectionStatusListener{
+    override fun updateConnectionStatus(status: ConnectionStatus)
+    fun updateSensorActivity(sensor: String, status: Boolean)
 }
