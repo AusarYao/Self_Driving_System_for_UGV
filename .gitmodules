@@ -1,0 +1,3 @@
+[submodule "sensor/AndroidPIComm"]
+	path = sensor/AndroidPIComm
+	url = git@github.com:AusarYao/AndroidPIComm.git
