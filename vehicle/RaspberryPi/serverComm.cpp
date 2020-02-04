@@ -1,37 +1,41 @@
-fun main(){
-    println("Hello World")
-}
+// Client side C/C++ program to demonstrate Socket programming 
+#include <stdio.h> 
+#include <sys/socket.h> 
+#include <arpa/inet.h> 
+#include <unistd.h> 
+#include <string.h>
+#define PORT 9999
 
-//fun pingYourTCPServerWith(message: String): String{
-//    try {
-//        val socket = Socket("<YOUR IP ADDRESS>", <YOUR PORT HERE>)
-//        socket.use {
-//
-//            var responseString : String? = null
-//
-//            it.getOutputStream().write(message.toByteArray())
-//            val bufferReader = BufferedReader(InputStreamReader(it.inputStream))
-//            while (true) {
-//                val line = bufferReader.readLine() ?: break
-//                responseString += line
-//                if (line == "exit") break
-//            }
-//            println("Received: $responseString")
-//            bufferReader.close()
-//            it.close()
-//            return responseString!!
-//        }
-//    }catch (he: UnknownHostException){
-//        val exceptionString = "An exception occurred:\n ${he.printStackTrace()}"
-//        return   exceptionString
-//    }catch (ioe: IOException){
-//        val exceptionString = "An exception occurred:\n ${ioe.printStackTrace()}"
-//        return   exceptionString
-//    } catch (ce: ConnectException){
-//        val exceptionString = "An exception occurred:\n ${ce.printStackTrace()}"
-//        return   exceptionString
-//    }catch (se: SocketException){
-//        val exceptionString = "An exception occurred:\n ${se.printStackTrace()}"
-//        return   exceptionString
-//    }
-//}
+int main(int argc, char const *argv[]) 
+{ 
+	int sock = 0, valread; 
+	struct sockaddr_in serv_addr; 
+	char* hello = "Hello from client"; 
+	char buffer[1024] = {0}; 
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+	{ 
+		printf("\n Socket creation error \n");
+		return -1; 
+	} 
+
+	serv_addr.sin_family = AF_INET; 
+	serv_addr.sin_port = htons(PORT); 
+	
+	// Convert IPv4 and IPv6 addresses from text to binary form 
+	if(inet_pton(AF_INET, "10.42.0.1", &serv_addr.sin_addr) <= 0)
+	{ 
+		printf("\nInvalid address/ Address not supported \n"); 
+		return -1; 
+	} 
+
+	if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+	{ 
+		printf("\nConnection Failed \n"); 
+		return -1; 
+	} 
+	send(sock , hello , strlen(hello) , 0 ); 
+	printf("Hello message sent\n"); 
+	valread = read( sock , buffer, 1024); 
+	printf("%s\n",buffer ); 
+	return 0; 
+} 

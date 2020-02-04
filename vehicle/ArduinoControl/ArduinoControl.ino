@@ -33,7 +33,7 @@ boolean commComplete = false,
 
 void setup() {
   Serial.begin(57600);
-  Serial.println("Arduino is ready");
+  Serial.print("Arduino is ready\n");
   dcMotorInitialize();
 }
 
