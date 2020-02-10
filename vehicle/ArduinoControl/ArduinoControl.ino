@@ -49,12 +49,12 @@ void dcMotorInitialize() {
   dcMotors[2] = {.pin1 = motor20, .pin2 = motor21, .powCtrl = motor2Pow, .power = 0};
   dcMotors[3] = {.pin1 = motor30, .pin2 = motor31, .powCtrl = motor3Pow, .power = 0};
   for (int i = 0; i < dcMortorNum; i++) { //Setting up pins to control motor
-    pinMode(dcMotors[i].pin1, OUTPUT);
-    pinMode(dcMotors[i].pin2, OUTPUT);
-    pinMode(dcMotors[i].powCtrl, OUTPUT);
+    pinMode(dcMotors[0].pin1, OUTPUT);
+    pinMode(dcMotors[0].pin2, OUTPUT);
+    pinMode(dcMotors[0].powCtrl, OUTPUT);
     digitalWrite(dcMotors[i].pin1, HIGH);
     digitalWrite(dcMotors[i].pin2, LOW);
-    analogWrite(dcMotors[i].powCtrl, 255);//dcMotors[i].power);
+    analogWrite(dcMotors[i].powCtrl, dcMotors[i].power);
   }
 }
 
