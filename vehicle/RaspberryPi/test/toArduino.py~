@@ -1,0 +1,16 @@
+import serial
+import RPi.GPIO as GPIO
+import time
+
+
+
+ser=serial.Serial("/dev/ttyACM0",57600,
+                  parity=serial.PARITY_NONE,
+                  stopbits=serial.STOPBITS_ONE,
+                  bytesize=serial.EIGHTBITS)  #change ACM number as found from ls /dev/tty/ACM
+
+
+values = bytearray([128, 3, 11, 0, 0])
+while(1):
+    ser.write(values)
+    time.sleep(1)

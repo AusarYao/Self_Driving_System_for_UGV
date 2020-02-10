@@ -1,0 +1,19 @@
+#include "utilities.h"
+#include "CommData.h"
+
+class ArduComm {
+  public:
+    ArduComm(CommData commData);
+    static onDataChange();
+  private:
+    CommData* mCommData = NULL;
+    unsigned char primeCommand[] = {128, 16, 0, 0, 0, 0, 
+                                    0, 1, 0, 0,
+                                    0, 2, 0, 0,
+                                    0, 3, 0, 0};
+    unsigned char stopCommand[] = {128, 16, 0, 0, 0, 0, 
+                                  0, 1, 0, 0,
+                                  0, 2, 0, 0,
+                                  0, 3, 0, 0};
+    
+};
